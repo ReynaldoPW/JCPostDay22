@@ -29,6 +29,7 @@ public class TestRateMovie {
 
         // Validate the response
         Assert.assertEquals(response.getStatusCode(), 201);
+        System.out.println("Response Code : "+response.getStatusCode());
     }
 }
 

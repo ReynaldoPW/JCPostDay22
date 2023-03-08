@@ -24,5 +24,6 @@ public class TestPopularMovie {
 
         // Validate the response
         Assert.assertEquals(response.getStatusCode(), 200);
+        System.out.println("Response Code : "+response.getStatusCode());
     }
 }
