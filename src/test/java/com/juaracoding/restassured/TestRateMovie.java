@@ -2,34 +2,37 @@ package com.juaracoding.restassured;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.json.simple.JSONObject;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class TestRateMovie {
-    String BASE_URI = "https://api.themoviedb.org/3/movie";
-    String MOVIE_ID = "631842";
-    float RATING = 8.5f;
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
 
-    String AUTH_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2MWI1MDlhNmFkOGFlNzcwMjcxZGM1YzFkODE5OWFjOSIsInN1YiI6IjY0MDcyZDYxMTJiMTBlMDA3Y2E1ZGU0OCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.zlvb6635xm83sRPxGgcZ3czVXDfXioD7JCX7HteWib4";
+@SuppressWarnings("unchecked")
+public class TestRateMovie {
+
 
     @Test
     public void testRateMovie() {
-        // Set up the request headers and body
-        String jsonBody = "{\"value\":" + RATING + "}";
-        String authHeader = "Bearer " + AUTH_TOKEN;
+        String baseUrl = "https://api.themoviedb.org/3";
+        String apiKeyV4 = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2MWI1MDlhNmFkOGFlNzcwMjcxZGM1YzFkODE5OWFjOSIsInN1YiI6IjY0MDcyZDYxMTJiMTBlMDA3Y2E1ZGU0OCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.zlvb6635xm83sRPxGgcZ3czVXDfXioD7JCX7HteWib4";
+        JSONObject requestBody = new JSONObject();
+        requestBody.put("value",8.5);
+        System.out.println(requestBody.toJSONString());
 
-        // Make the API request
-        Response response = RestAssured.given()
-                .baseUri(BASE_URI)
-                .header("Authorization", authHeader)
-                .pathParam("movie_id", MOVIE_ID)
-                .body(jsonBody)
-                .contentType("application/json")
-                .post("/{movie_id}/rating");
+        given()
+                .header("Content-Type","application/json")
+                .header("Authorization","Bearer "+apiKeyV4)
+//                .contentType(ContentType.JSON)
+//                .accept(ContentType.JSON)
+                .body(requestBody.toJSONString())
+                .when().post(baseUrl+"/movie/631842/rating")
+                .then()
+                .statusCode(201)
+                .body("success",equalTo(true))
+                .log().all();
 
-        // Validate the response
-        Assert.assertEquals(response.getStatusCode(), 201);
-        System.out.println("Response Code : "+response.getStatusCode());
     }
 }
 
